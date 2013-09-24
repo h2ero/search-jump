@@ -16,7 +16,7 @@ GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notif
 //global 
 var sJumpDebug = true;
 var inspectEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
-var excludeInspactEl = '.sJump-menu *,.sJump-menu';
+var excludeInspectEl = '.sJump-menu *,.sJump-menu';
 
 var log;
 if (sJumpDebug) {
@@ -72,7 +72,7 @@ $(function(){
     sJump.event = {};
     
     // save form --------------------------------------------------------------------------------
-    sJump.clearInspact = function(){
+    sJump.clearInspect = function(){
         $("*").removeClass("sJump-inspect");
         $(".sJump-inspect-notify").remove();
     }
@@ -88,7 +88,7 @@ $(function(){
     }
     sJump.event.inspect = function(e){
         log("%chover:%c"+cssPath($(this)[0]), "color:green", "color:black");
-        sJump.clearInspact();
+        sJump.clearInspect();
         $(this).addClass("sJump-inspect");
         $(this).append("<b class=\"sJump-inspect-notify\">"+cssPath($(this)[0])+"</b>");
         e.stopPropagation();
@@ -102,7 +102,7 @@ $(function(){
         });
     }
 
-    sJump.event.doInspact = function(e){
+    sJump.event.doInspect = function(e){
         log("%cclick:%c"+cssPath($(this)[0]), "color:red", "color:black");
         if ($(this)[0].nodeName=='INPUT') {
             var action = sJump.getFormAction($(this))
@@ -120,6 +120,7 @@ $(function(){
             sJump.store.savePosition(cssPath($(this)[0]), method)
         }
         e.stopPropagation();
+        sJump.event.unbind();
         return false;
     }
 
@@ -168,23 +169,23 @@ $(function(){
 
 
 
-    var iel = $(inspectEl).not(excludeInspactEl);
+    var iel = $(inspectEl).not(excludeInspectEl);
     //binding 
     sJump.event.bind = function(){
         // inspect ---------------------------------------------------------------------------
         iel.bind("mouseenter", sJump.event.inspect);
-        iel.bind("mouseleave", sJump.clearInspact);
+        iel.bind("mouseleave", sJump.clearInspect);
         
         // get form field --------------------------------------------------------------------
-        $("body").on("click",".sJump-inspect", sJump.event.doInspact);
+        $("body").on("click",".sJump-inspect", sJump.event.doInspect);
     }
     sJump.event.unbind = function(){
         // inspect ---------------------------------------------------------------------------
         iel.unbind("mouseenter", sJump.event.inspect);
-        iel.unbind("mouseleave", sJump.clearInspact);
+        iel.unbind("mouseleave", sJump.clearInspect);
 
         // get form field --------------------------------------------------------------------
-        $("body").on("mousedown,",".sJump-inspect", sJump.event.doInspact);
+        $("body").on("mousedown,",".sJump-inspect", sJump.event.doInspect);
 
     }
     $(".sJump-icon").click(function(){
