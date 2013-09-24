@@ -27,16 +27,24 @@ if (sJumpDebug) {
 log("sJump load!")
 
 
-var searchs = {};
-var positions = {};
-if (GM_getValue("sJump_searchs")) {
-    searchs = JSON.parse(GM_getValue("sJump_searchs"))
+var sJump_searchs = {};
+var sJump_positions = {};
+var sJump_forms = {}
+var getObjFromGM = function(name){
+    if (GM_getValue(name)) {
+        return JSON.parse(GM_getValue(name))
+    }else{
+        return {}
+    }
 }
-if (GM_getValue("sJump_positions")) {
-    positions = JSON.parse(GM_getValue("sJump_positions"))
-}
-log(positions);
-log(searchs);
+
+sJump_searchs = getObjFromGM("sJump_searchs")
+sJump_positions = getObjFromGM("sJump_positions")
+sJump_forms = getObjFromGM("sJump_forms")
+
+log(sJump_positions);
+log(sJump_searchs);
+log(sJump_forms)
 
 // http://stackoverflow.com/questions/3620116/get-css-path-from-dom-element
 var cssPath = function(el) {
@@ -109,7 +117,8 @@ $(function(){
             var queryName = $(this).attr("name");
             sUrl = action +"?"+ queryName + "=";
             sFav = sJump.event.getFavicon();
-            sJump.store.saveSearch(sUrl)
+            console.log(sUrl, cssPath($(this)[0]))
+            sJump.store.saveSearch(sUrl, cssPath($(this)[0]))
             log(sUrl, sFav);
         } else {
             console.dir(e.ctrlKey);
@@ -126,21 +135,27 @@ $(function(){
 
     // store value --------------------------------------------------------------------------------
     sJump.store = {}
-    sJump.store.saveSearch = function(url){
+    sJump.store.saveSearch = function(url, cssPath){
         var searchName = prompt("input search");
         if (searchName) {
-            searchs[btoa(escape(searchName))] = {url:url}
-            var value = JSON.stringify(searchs);
+            sJump_searchs[btoa(escape(searchName))] = {url:url}
+            var value = JSON.stringify(sJump_searchs);
             GM_setValue("sJump_searchs", value)
             log("%csave search:"+value,"color:blue")
+
+            //forms
+            sJump_forms[document.domain] = {cssPath:cssPath, searchName:btoa(escape(searchName))}
+            var value = JSON.stringify(sJump_forms);
+            GM_setValue("sJump_forms", value)
+            log("%csave form:"+value,"color:blue")
         }
     }
 
     sJump.store.savePosition = function(cssPath,method){
-        var position = prompt("input position");
-        if (position) {
-            positions[document.domain] = {cssPath:cssPath, method:method}
-            var value = JSON.stringify(positions);
+        var sJump_position = prompt("input position");
+        if (sJump_position) {
+            sJump_positions[document.domain] = {cssPath:cssPath, method:method}
+            var value = JSON.stringify(sJump_positions);
             GM_setValue("sJump_positions", value)
             log("%csave position:"+value,"color:blue")
         }
@@ -148,21 +163,30 @@ $(function(){
     sJump.store.reset = function(){
         GM_setValue("sJump_searchs", "{}")
         GM_setValue("sJump_positions", "{}")
+        GM_setValue("sJump_forms", "{}")
+    }
+    sJump.store.getSearchWord = function(){
+        if (sJump_forms.hasOwnProperty(document.domain)) {
+            return $(sJump_forms[document.domain].cssPath).val();
+        }else{
+            return "";
+        }
     }
     // dom --------------------------------------------------------------------------------
     sJump.dom = {}
     sJump.dom.addSearchBar = function(){
-        if(positions.hasOwnProperty(document.domain)){
-            log("add search bar:"+positions[document.domain].cssPath);
+        if(sJump_positions.hasOwnProperty(document.domain)){
+            log("add search bar:"+sJump_positions[document.domain].cssPath);
 
             var searchDiv = "";
-            for (i in searchs) {
-                searchDiv += "<a href=\""+searchs[i].url+"\" >"+unescape(atob(i))+"</a>"
+            var word = sJump.store.getSearchWord();
+            for (i in sJump_searchs) {
+                searchDiv += "<a href=\""+sJump_searchs[i].url+word+"\" >"+unescape(atob(i))+"</a>"
             };
-            if (positions[document.domain].method == 'after') {
-                $(positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+            if (sJump_positions[document.domain].method == 'after') {
+                $(sJump_positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
             }else{
-                $(positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+                $(sJump_positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
             }
         }
     }
