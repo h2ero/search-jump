@@ -6,21 +6,6 @@
 // @description  search jump
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
 // ==/UserScript==
-
-/*
- * store value: search:name:[icon, url], position: cssPath:[url,searchs]
- *
- *  
- *
- *
- *
- * todo: 1. added + - to increase and decrease div level.
- *
- *
- *
- */
-
-
 // style 
 GM_addStyle(".sJump-inspact{ border:1px solid !important; } .sJump-inspact-notify{ color:#000; background-color:#f00; font-size:13px; padding:2px; z-index=999999;}"+
             ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
