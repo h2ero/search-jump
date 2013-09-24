@@ -12,7 +12,7 @@ GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notif
             ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; height: 50px; position: fixed; right: -300px; top: 300px; width: 300px;-moz-transition:all .2s ease;}"+
             ".sJump-popup-show{display:block !important;right:0px;}"+
             ".sJump-search-bar{clear:both;margin:20px 0px;background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px #000000; font-size: 14px; height: 30px; line-height: 30px; padding-left: 20px;}"+
-            ".sJump-search-bar a{margin:0px 5px;}"); 
+            ".sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}"); 
 //global 
 var sJumpDebug = true;
 var inspectEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
@@ -73,7 +73,7 @@ var cssPath = function(el) {
 }
 
 $(function(){
-    $('body').after('<div class="sJump-menu"> <a href="#" class="sJump-icon">s</a> <a href="#" class="sJump-add-search">+</a> <a href="#" class="sJump-after-search">-</a></div><div class="sJump-popup"></div> ');
+    $('body').after('<div class="sJump-menu"><a href="#" class="sJump-icon">s</a> <a href="#" class="sJump-add-search">+</a> <a href="#" class="sJump-after-search">-</a></div><div class="sJump-popup"></div> ');
 
 
     var sJump = {};
@@ -183,10 +183,11 @@ $(function(){
             for (i in sJump_searchs) {
                 searchDiv += "<a href=\""+sJump_searchs[i].url+word+"\" >"+unescape(atob(i))+"</a>"
             };
+            var logo = "<b style=\"color: rgb(0, 0, 0);\">SJ</b>"
             if (sJump_positions[document.domain].method == 'after') {
-                $(sJump_positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+                $(sJump_positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
             }else{
-                $(sJump_positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+                $(sJump_positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
             }
         }
     }
