@@ -7,7 +7,7 @@
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
 // ==/UserScript==
 // style 
-GM_addStyle(".sJump-inspact{ border:1px solid !important; } .sJump-inspact-notify{ color:#000; background-color:#f00; font-size:13px; padding:2px; z-index=999999;}"+
+GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px; padding:2px; z-index=999999;}"+
             ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
             ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; height: 50px; position: fixed; right: -300px; top: 300px; width: 300px;-moz-transition:all .2s ease;}"+
             ".sJump-popup-show{display:block !important;right:0px;}"+
@@ -15,7 +15,7 @@ GM_addStyle(".sJump-inspact{ border:1px solid !important; } .sJump-inspact-notif
             ".sJump-search-bar a{margin:0px 5px;}"); 
 //global 
 var sJumpDebug = true;
-var inspactEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
+var inspectEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
 var excludeInspactEl = '.sJump-menu *,.sJump-menu';
 
 var log;
@@ -73,8 +73,8 @@ $(function(){
     
     // save form --------------------------------------------------------------------------------
     sJump.clearInspact = function(){
-        $("*").removeClass("sJump-inspact");
-        $(".sJump-inspact-notify").remove();
+        $("*").removeClass("sJump-inspect");
+        $(".sJump-inspect-notify").remove();
     }
     sJump.getFormAction = function(el){
         while(el.parent()[0].nodeName != 'FORM' || el.parent()[0].nodeName == 'BODY'){
@@ -82,11 +82,11 @@ $(function(){
         }
         return el.parent().attr("action");
     }
-    sJump.event.inspact = function(e){
+    sJump.event.inspect = function(e){
         log("%chover:%c"+cssPath($(this)[0]), "color:green", "color:black");
         sJump.clearInspact();
-        $(this).addClass("sJump-inspact");
-        $(this).append("<b class=\"sJump-inspact-notify\">"+cssPath($(this)[0])+"</b>");
+        $(this).addClass("sJump-inspect");
+        $(this).append("<b class=\"sJump-inspect-notify\">"+cssPath($(this)[0])+"</b>");
         e.stopPropagation();
     }
 
@@ -154,34 +154,34 @@ $(function(){
 
 
 
-    var iel = $(inspactEl).not(excludeInspactEl);
+    var iel = $(inspectEl).not(excludeInspactEl);
     //binding 
     sJump.event.bind = function(){
-        // inspact ---------------------------------------------------------------------------
-        iel.bind("mouseenter", sJump.event.inspact);
+        // inspect ---------------------------------------------------------------------------
+        iel.bind("mouseenter", sJump.event.inspect);
         iel.bind("mouseleave", sJump.clearInspact);
         
         // get form field --------------------------------------------------------------------
-        $("body").on("click",".sJump-inspact", sJump.event.doInspact);
+        $("body").on("click",".sJump-inspect", sJump.event.doInspact);
     }
     sJump.event.unbind = function(){
-        // inspact ---------------------------------------------------------------------------
-        iel.unbind("mouseenter", sJump.event.inspact);
+        // inspect ---------------------------------------------------------------------------
+        iel.unbind("mouseenter", sJump.event.inspect);
         iel.unbind("mouseleave", sJump.clearInspact);
 
         // get form field --------------------------------------------------------------------
-        $("body").on("click",".sJump-inspact", sJump.event.doInspact);
+        $("body").on("click",".sJump-inspect", sJump.event.doInspact);
 
     }
     $(".sJump-icon").click(function(){
         $(".sJump-popup").toggleClass("sJump-popup-show");
     });
     $(".sJump-add-search").click(function(){
-        log("inspact start!");
+        log("inspect start!");
         sJump.event.bind();
     });
     $(".sJump-after-search").click(function(){
-        log("inspact cancle!");
+        log("inspect cancle!");
         sJump.event.unbind();
     });
     sJump.dom.addSearchBar();
