@@ -11,7 +11,7 @@ GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notif
             ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
             ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; height: 50px; position: fixed; right: -300px; top: 300px; width: 300px;-moz-transition:all .2s ease;}"+
             ".sJump-popup-show{display:block !important;right:0px;}"+
-            ".sJump-search-bar{margin:20px 0px;background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px #000000; font-size: 14px; height: 30px; line-height: 30px; padding-left: 20px;}"+
+            ".sJump-search-bar{clear:both;margin:20px 0px;background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px #000000; font-size: 14px; height: 30px; line-height: 30px; padding-left: 20px;}"+
             ".sJump-search-bar a{margin:0px 5px;}"); 
 //global 
 var sJumpDebug = true;
@@ -112,7 +112,12 @@ $(function(){
             sJump.store.saveSearch(sUrl)
             log(sUrl, sFav);
         } else {
-            sJump.store.savePosition(cssPath($(this)[0]))
+            console.dir(e.ctrlKey);
+            var method = 'after';
+            if (e.ctrlKey) {
+                method = 'before';
+            }
+            sJump.store.savePosition(cssPath($(this)[0]), method)
         }
         e.stopPropagation();
         return false;
@@ -130,10 +135,10 @@ $(function(){
         }
     }
 
-    sJump.store.savePosition = function(cssPath){
+    sJump.store.savePosition = function(cssPath,method){
         var position = prompt("input position");
         if (position) {
-            positions[document.domain] = {cssPath:cssPath}
+            positions[document.domain] = {cssPath:cssPath, method:method}
             var value = JSON.stringify(positions);
             GM_setValue("sJump_positions", value)
             log("%csave position:"+value,"color:blue")
@@ -153,7 +158,11 @@ $(function(){
             for (i in searchs) {
                 searchDiv += "<a href=\""+searchs[i].url+"\" >"+unescape(atob(i))+"</a>"
             };
-            $(positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+            if (positions[document.domain].method == 'after') {
+                $(positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+            }else{
+                $(positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+            }
         }
     }
 
@@ -175,19 +184,22 @@ $(function(){
         iel.unbind("mouseleave", sJump.clearInspact);
 
         // get form field --------------------------------------------------------------------
-        $("body").on("click",".sJump-inspect", sJump.event.doInspact);
+        $("body").on("mousedown,",".sJump-inspect", sJump.event.doInspact);
 
     }
     $(".sJump-icon").click(function(){
         $(".sJump-popup").toggleClass("sJump-popup-show");
+        return false;
     });
     $(".sJump-add-search").click(function(){
         log("inspect start!");
         sJump.event.bind();
+        return false;
     });
     $(".sJump-after-search").click(function(){
         log("inspect cancle!");
         sJump.event.unbind();
+        return false;
     });
     sJump.dom.addSearchBar();
 });
