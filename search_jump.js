@@ -80,7 +80,11 @@ $(function(){
         while(el.parent()[0].nodeName != 'FORM' || el.parent()[0].nodeName == 'BODY'){
             el = el.parent()
         }
-        return el.parent().attr("action");
+        var action = el.parent().attr("action");
+        if (!/^\/\//.test(action)&&/^\//.test(action)) {
+            action = document.location.origin+action;
+        }
+        return  action;
     }
     sJump.event.inspect = function(e){
         log("%chover:%c"+cssPath($(this)[0]), "color:green", "color:black");
@@ -142,14 +146,15 @@ $(function(){
     // dom --------------------------------------------------------------------------------
     sJump.dom = {}
     sJump.dom.addSearchBar = function(){
-        log("add search bar:"+positions[document.domain].cssPath);
+        if(positions.hasOwnProperty(document.domain)){
+            log("add search bar:"+positions[document.domain].cssPath);
 
-        var searchDiv = "";
-        for (i in searchs) {
-            searchDiv += "<a href=\""+searchs[i].url+"\" >"+unescape(atob(i))+"</a>"
-        };
-
-        $(positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+            var searchDiv = "";
+            for (i in searchs) {
+                searchDiv += "<a href=\""+searchs[i].url+"\" >"+unescape(atob(i))+"</a>"
+            };
+            $(positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+searchDiv+"</div>")
+        }
     }
 
 
