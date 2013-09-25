@@ -9,14 +9,15 @@
 // style 
 GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px; padding:2px; z-index=999999;}"+
             ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
-            ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; height: 50px; position: fixed; right: -300px; top: 300px; width: 300px;-moz-transition:all .2s ease;}"+
+            ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 300px; width: 300px;-moz-transition:all .2s ease;}"+
+            ".sJump-popup li {display:inline;list-style:none;color:#bbb;}"+
             ".sJump-popup-show{display:block !important;right:0px;}"+
-            ".sJump-search-bar{clear:both;margin:20px 0px;background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px #000000; font-size: 14px; height: 30px; line-height: 30px; padding-left: 20px;}"+
+            ".sJump-search-bar{clear:both;margin:20px 0px;background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}"+
             ".sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}"); 
 //global 
 var sJumpDebug = true;
 var inspectEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
-var excludeInspectEl = '.sJump-menu *,.sJump-menu';
+var excludeInspectEl = '.sJump-menu *,.sJump-menu,.sJump-popup *, .sJump-popup';
 
 var log;
 if (sJumpDebug) {
@@ -214,7 +215,11 @@ $(function(){
 
     }
     $(".sJump-icon").click(function(){
-        $(".sJump-popup").toggleClass("sJump-popup-show");
+        var checkbox = "";
+        for(i in sJump_searchs){
+            checkbox += "<li>"+unescape(atob(i))+"<input type=\"checkbox\"></li>";
+        }
+        $(".sJump-popup").toggleClass("sJump-popup-show").html(checkbox);
         return false;
     });
     $(".sJump-add-search").click(function(){
