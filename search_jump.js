@@ -64,8 +64,13 @@ var cssPath = function(el) {
                 if (sib.nodeName.toLowerCase() == selector)
                    nth++;
             }
-            if (nth != 1)
+            if (nth != 1){
                 selector += ":nth-of-type("+nth+")";
+            } else {
+                if (el.classList.length != 0) {
+                    selector += "."+el.classList[0];
+                }
+            }
         }
         path.unshift(selector);
         el = el.parentNode;
