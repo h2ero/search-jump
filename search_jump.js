@@ -90,8 +90,12 @@ $(function(){
             el = el.parent()
         }
         var action = el.parent().attr("action");
-        if (!/^\/\//.test(action)&&/^\//.test(action)) {
-            action = document.location.origin+action;
+        if (!/^http/.test(action)) {
+            if (!/^\//.test(action)) {
+                action = document.location.origin+"/"+action;
+            } else {
+                action = document.location.origin+action;
+            }
         }
         return  action;
     }
@@ -177,10 +181,13 @@ $(function(){
     sJump.dom = {}
     sJump.dom.addSearchBar = function(){
         if(sJump_positions.hasOwnProperty(document.domain)){
-            log("add search bar:"+sJump_positions[document.domain].cssPath);
-
             var searchDiv = "";
             var word = sJump.store.getSearchWord();
+            if (!word) {
+                return false;
+            }
+            log("add search bar:"+sJump_positions[document.domain].cssPath);
+            log("catch search word:"+word)
             for (i in sJump_searchs) {
                 searchDiv += "<a href=\""+sJump_searchs[i].url+word+"\" >"+unescape(atob(i))+"</a>"
             };
