@@ -9,11 +9,13 @@
 // style 
 GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px; padding:2px; z-index=999999;}"+
             ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
-            ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 300px; width: 300px;-moz-transition:all .2s ease;}"+
-            ".sJump-popup li {display:inline;list-style:none;color:#bbb;}"+
+            ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 200px; width: 300px;-moz-transition:all .2s ease;}"+
+            ".sJump-popup li {display:inline-block;list-style:none;color:#bbb;width:100px;}"+
             ".sJump-popup-show{display:block !important;right:0px;}"+
             ".sJump-search-bar{clear:both;margin:20px 0px;background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}"+
-            ".sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}"); 
+            ".sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}"+
+            ".sJump-save{float:right;}"
+            ); 
 //global 
 var sJumpDebug = true;
 var inspectEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
@@ -79,7 +81,7 @@ var cssPath = function(el) {
 }
 
 $(function(){
-    $('body').after('<div class="sJump-menu"><a href="#" class="sJump-icon">s</a> <a href="#" class="sJump-add-search">+</a> <a href="#" class="sJump-after-search">-</a></div><div class="sJump-popup"></div> ');
+    $('body').after('<div class="sJump-menu"><a href="#" class="sJump-icon">s</a> <a href="#" class="sJump-add-search">+</a> <a href="#" class="sJump-after-search">-</a></div><div class="sJump-popup"></br><input type="button" class="sJump-save" value="保存"></div> ');
 
 
     var sJump = {};
@@ -148,7 +150,7 @@ $(function(){
     sJump.store.saveSearch = function(url, cssPath){
         var searchName = prompt("input search");
         if (searchName) {
-            sJump_searchs[btoa(escape(searchName))] = {url:url}
+            sJump_searchs[btoa(escape(searchName))] = {url:url, enable:true}
             var value = JSON.stringify(sJump_searchs);
             GM_setValue("sJump_searchs", value)
             log("%csave search:"+value,"color:blue")
@@ -194,7 +196,9 @@ $(function(){
             log("add search bar:"+sJump_positions[document.domain].cssPath);
             log("catch search word:"+word)
             for (i in sJump_searchs) {
-                searchDiv += "<a href=\""+sJump_searchs[i].url+word+"\" >"+unescape(atob(i))+"</a>"
+                if (sJump_searchs[i].enable == true) {
+                    searchDiv += "<a href=\""+sJump_searchs[i].url+word+"\" >"+unescape(atob(i))+"</a>"
+                }
             };
             var logo = "<b style=\"color: rgb(0, 0, 0);\">SJ</b>"
             if (sJump_positions[document.domain].method == 'after') {
@@ -203,6 +207,13 @@ $(function(){
                 $(sJump_positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
             }
         }
+    }
+    //upate
+    sJump.update = {}
+    sJump.update.enable = function(searchHash, flag=true){
+        sJump_searchs[searchHash].enable = flag;
+        log(JSON.stringify(sJump_searchs))
+        GM_setValue("sJump_searchs", JSON.stringify(sJump_searchs));
     }
 
 
@@ -229,9 +240,13 @@ $(function(){
     $(".sJump-icon").click(function(){
         var checkbox = "";
         for(i in sJump_searchs){
-            checkbox += "<li>"+unescape(atob(i))+"<input type=\"checkbox\"></li>";
+            var checked = '';
+            if (sJump_searchs[i].enable == true) {
+                checked = ' checked="checked" ';
+            }
+            checkbox += "<li><input type=\"checkbox\" "+checked+"value=\""+i+"\">"+unescape(atob(i))+"</li>";
         }
-        $(".sJump-popup").toggleClass("sJump-popup-show").html(checkbox);
+        $(".sJump-popup").toggleClass("sJump-popup-show").prepend(checkbox);
         return false;
     });
     $(".sJump-add-search").click(function(){
@@ -244,5 +259,17 @@ $(function(){
         sJump.event.unbind();
         return false;
     });
+
+    $(".sJump-save").click(function(){
+        log("save form");
+        $(".sJump-popup input[type='checkbox']").each(function(){
+            if ($(this).attr("checked")=='checked') {
+                sJump.update.enable($(this).val());
+            }else{
+                sJump.update.enable($(this).val(), false);
+            }
+        });
+    });
+
     sJump.dom.addSearchBar();
 });
