@@ -69,7 +69,7 @@ var cssPath = function(el) {
             if (nth != 1){
                 selector += ":nth-of-type("+nth+")";
             } else {
-                if (el.classList.length != 0) {
+                if (el.classList.length != 0 && el.classList[0]!='sJump-inspect') {
                     selector += "."+el.classList[0];
                 }
             }
