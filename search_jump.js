@@ -9,10 +9,10 @@
 // style 
 GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}"+
             ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
-            ".sJump-popup { background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 200px; width: 300px;-moz-transition:all .2s ease;}"+
+            ".sJump-popup { font-size:14px;background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 200px; width: 300px;-moz-transition:all .2s ease;}"+
             ".sJump-popup li {display:inline-block;list-style:none;color:#bbb;width:100px;}"+
             ".sJump-popup-show{display:block !important;right:0px;}"+
-            ".sJump-search-bar{clear:both;margin:20px 0px;background: none repeat scroll 0 0 #FFFFFF; box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}"+
+            ".sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}"+
             ".sJump-search-bar img{width:16px;height:16px;vertical-align:middle;margin-right:1px;}"+
             "#sJump-favicon{top:300px;position:fixed;right:0px;}"+
             ".sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}"+
@@ -94,16 +94,20 @@ $(function(){
         $(".sJump-inspect-notify").remove();
     }
     sJump.getFormAction = function(el){
-        while(el.parent()[0].nodeName != 'FORM' || el.parent()[0].nodeName == 'BODY'){
+        while(el.parent()[0].nodeName != 'FORM' && el.parent()[0].nodeName != 'BODY'){
             el = el.parent()
+            console.log(el.parent()[0].nodeName);
         }
         var action = el.parent().attr("action");
-        if (!/^http/.test(action)) {
+        console.log(action)
+        if (!/^http/.test(action)&&action != undefined) {
             if (!/^\//.test(action)) {
                 action = document.location.origin+"/"+action;
             } else {
                 action = document.location.origin+action;
             }
+        }else{
+            return undefined;
         }
         return  action;
     }
@@ -127,9 +131,14 @@ $(function(){
         log("%cclick:%c"+cssPath($(this)[0]), "color:red", "color:black");
         if ($(this)[0].nodeName=='INPUT') {
             var action = sJump.getFormAction($(this))
-            var queryName = $(this).attr("name");
-            sUrl = action +"?"+ queryName + "=";
-            sFav = sJump.event.getFavicon();
+            var sUrl = '';
+            if (action != undefined) {
+                var queryName = $(this).attr("name");
+                sUrl = action +"?"+ queryName + "=";
+            }else{
+                sUrl = prompt("please input search url")
+            }
+
             console.log(sUrl, cssPath($(this)[0]))
             sJump.store.saveSearch(sUrl, cssPath($(this)[0]))
             log(sUrl, sFav);
