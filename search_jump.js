@@ -3,8 +3,6 @@
 // @namespace   http://blog.h2ero.cn
 // @include     *
 // @version     0.1
-// @grant       GM_getValue
-// @grant       GM_setValue
 // @description  search jump
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
 // ==/UserScript==
