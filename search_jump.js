@@ -8,16 +8,22 @@
 // ==/UserScript==
 // style 
 
-GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}"+
-            ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
-            ".sJump-popup { z-index:10000; font-size:14px;background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 200px; width: 300px;-moz-transition:all .2s ease;}"+
-            ".sJump-popup li {display:inline-block;list-style:none;color:#bbb;width:100px;}"+
-            ".sJump-popup-show{display:block !important;right:0px;}"+
-            ".sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}"+
-            ".sJump-search-bar img{width:16px;height:16px;vertical-align:middle;margin-right:1px;}"+
-            "#sJump-favicon{top:300px;position:fixed;right:0px;}"+
-            ".sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}"+
-            ".sJump-save,.sJump-update-favicon { margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; float: right;}"); 
+var m = function(f) {
+  return f.toString().split('\n').slice(1, -1).join('\n');
+}
+
+GM_addStyle(m(function(){/*
+            .sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}
+            .sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }
+            .sJump-popup { z-index:10000; font-size:14px;background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; padding:5px;position: fixed; right: -300px; top: 200px; width: 300px;-moz-transition:all .2s ease;}
+            .sJump-popup li {display:inline-block;list-style:none;color:#bbb;width:100px;}
+            .sJump-popup-show{display:block !important;right:0px;}
+            .sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}
+            .sJump-search-bar img{width:16px;height:16px;vertical-align:middle;margin-right:1px;}
+            #sJump-favicon{top:300px;position:fixed;right:0px;}
+            .sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}
+            .sJump-save,.sJump-update-favicon { margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; float: right;}
+*/})); 
 
 //global 
 
@@ -98,7 +104,20 @@ var cssPath = function(el) {
 }
 
 $(function(){
-    $('body').after('<div class="sJump-menu"><a href="#" class="sJump-icon">s</a> <a href="#" class="sJump-add-search">+</a> <a href="#" class="sJump-after-search">-</a></div><div class="sJump-popup"></br><input type="button" class="sJump-save" value="保存"><input type="button" class="sJump-update-favicon" value="更新favicon"></div><canvas id="sJump-favicon" width="16px" height="16px"></canvas>');
+    var html = m(function(){/*
+            <div class="sJump-menu">
+                <a href="#" class="sJump-icon">s</a>
+                <a href="#" class="sJump-add-search">+</a>
+                <a href="#" class="sJump-after-search">-</a>
+            </div>
+            <div class="sJump-popup"></br>
+                <input type="button" class="sJump-save" value="保存">
+                <input type="button" class="sJump-update-favicon" value="更新favicon">
+            </div>
+            <canvas id="sJump-favicon" width="16px" height="16px"></canvas>
+        */}); 
+
+    $('body').after(html);
 
 
     var sJump = {};
