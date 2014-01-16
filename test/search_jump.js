@@ -6,19 +6,9 @@
 //
 // comment --------------------------------------------------------------------------------
 $(function(){
-    dd  = function (e){
-        console.dir(e.data);
-    }
-    $("body").bind("click", {el:this},dd);
-
-    $("body").bind("click", function(){
-        console.log(32223);
-    });
-
-    $("a").click(function(){
-        console.log("unbind");
-        $("body").unbind("click", function(){
-            console.log(333);
-        });
+    $('.sJump-tabs .tab-name li').click(function(){
+        var index = $(this).attr('index');
+        $('.sJump-tabs .tab-content').hide();
+        $('.sJump-tabs .tab-content[index="'+index+'"]').show();
     });
 });
