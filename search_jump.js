@@ -3,13 +3,16 @@
 // @namespace   http://blog.h2ero.cn
 // @include     *
 // @version     0.1
+// @grant       GM_getValue
+// @grant       GM_setValue
 // @description  search jump
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
 // ==/UserScript==
 // style 
+
 GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}"+
             ".sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }"+
-            ".sJump-popup { font-size:14px;background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 200px; width: 300px;-moz-transition:all .2s ease;}"+
+            ".sJump-popup { z-index:10000; font-size:14px;background: none repeat scroll 0 0 rgba(0, 0, 0, 0.79); box-shadow: 1px 1px 20px #000000; display: none; /*height: 50px; */padding:5px;position: fixed; right: -300px; top: 200px; width: 300px;-moz-transition:all .2s ease;}"+
             ".sJump-popup li {display:inline-block;list-style:none;color:#bbb;width:100px;}"+
             ".sJump-popup-show{display:block !important;right:0px;}"+
             ".sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}"+
@@ -17,23 +20,36 @@ GM_addStyle(".sJump-inspect{ border:1px solid !important; } .sJump-inspect-notif
             "#sJump-favicon{top:300px;position:fixed;right:0px;}"+
             ".sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}"+
             ".sJump-save,.sJump-update-favicon { margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; float: right;}"); 
+
 //global 
+
+// DEBUG
 var sJumpDebug = true;
+
+// 允许选择的元素.
 var inspectEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
+
+// 排除的元素
 var excludeInspectEl = '.sJump-menu *,.sJump-menu,.sJump-popup *, .sJump-popup';
 
+// 日志输出
 var log;
 if (sJumpDebug) {
     log = console.log;
 }else{
     log = function(){};
 }
+
+// 载入提示.
 log("sJump load!")
 
 
+// 全局OBJ
 var sJump_searchs = {};
 var sJump_positions = {};
 var sJump_forms = {}
+
+// 从GM中获取元素的方法.
 var getObjFromGM = function(name){
     if (GM_getValue(name)) {
         return JSON.parse(GM_getValue(name))
@@ -42,9 +58,11 @@ var getObjFromGM = function(name){
     }
 }
 
+// 载入设置值
 sJump_searchs = getObjFromGM("sJump_searchs")
 sJump_positions = getObjFromGM("sJump_positions")
 sJump_forms = getObjFromGM("sJump_forms")
+
 
 log(sJump_positions);
 log(sJump_searchs);
@@ -93,6 +111,7 @@ $(function(){
         $("*").removeClass("sJump-inspect");
         $(".sJump-inspect-notify").remove();
     }
+
     sJump.getFormAction = function(el){
         while(el.parent()[0].nodeName != 'FORM' && el.parent()[0].nodeName != 'BODY'){
             el = el.parent()
@@ -111,6 +130,7 @@ $(function(){
         }
         return  action;
     }
+
     sJump.event.inspect = function(e){
         log("%chover:%c"+cssPath($(this)[0]), "color:green", "color:black");
         sJump.clearInspect();
@@ -194,6 +214,7 @@ $(function(){
             return "";
         }
     }
+
     // dom --------------------------------------------------------------------------------
     sJump.dom = {}
     sJump.dom.addSearchBar = function(){
@@ -218,6 +239,7 @@ $(function(){
             }
         }
     }
+
     //upate
     sJump.update = {}
     sJump.update.enable = function(searchHash, flag=true){
@@ -253,6 +275,7 @@ $(function(){
 
 
     var iel = $(inspectEl).not(excludeInspectEl);
+
     //binding 
     sJump.event.bind = function(){
         // inspect ---------------------------------------------------------------------------
@@ -262,6 +285,7 @@ $(function(){
         // get form field --------------------------------------------------------------------
         $("body").on("click",".sJump-inspect", sJump.event.doInspect);
     }
+
     sJump.event.unbind = function(){
         // inspect ---------------------------------------------------------------------------
         iel.unbind("mouseenter", sJump.event.inspect);
@@ -271,6 +295,7 @@ $(function(){
         $("body").on("mousedown,",".sJump-inspect", sJump.event.doInspect);
 
     }
+
     $(".sJump-icon").click(function(){
         var checkbox = "";
         for(i in sJump_searchs){
@@ -283,11 +308,13 @@ $(function(){
         $(".sJump-popup").toggleClass("sJump-popup-show").prepend(checkbox);
         return false;
     });
+
     $(".sJump-add-search").click(function(){
         log("inspect start!");
         sJump.event.bind();
         return false;
     });
+
     $(".sJump-after-search").click(function(){
         log("inspect cancle!");
         sJump.event.unbind();
@@ -312,9 +339,8 @@ $(function(){
                 sJump.update.favicon($(this).val());
             }
         });
-
     });
 
-
     sJump.dom.addSearchBar();
+
 });
