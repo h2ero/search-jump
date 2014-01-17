@@ -8,6 +8,14 @@
 // ==/UserScript==
 // style 
 
+jQuery.fn.center = function ()
+{
+    this.css("position","fixed");
+    this.css("top", ($(window).height() / 2) - (this.outerHeight() / 2));
+    this.css("left", ($(window).width() / 2) - (this.outerWidth() / 2));
+    return this;
+}
+
 var m = function(f) {
   return f.toString().split('\n').slice(1, -1).join('\n');
 }
@@ -34,7 +42,9 @@ GM_addStyle(m(function(){/*
                 color:#D7005F;
                 border-bottom:1px solid #777;
             }
+            .sJump-popup-show{display:block !important; }
             .sJump-popup {
+                -moz-transition:all .9s ease;
                 background: none repeat scroll 0 0 #232323;
                 box-shadow: 1px 2px 10px;
                 left: 100px;
@@ -43,6 +53,7 @@ GM_addStyle(m(function(){/*
                 top: 100px;
                 width: 600px;
                 z-index: 20000000;
+                display:none;
             }
             .sJump-tabs .tab-name, .sJump-tabs .tab-list {
                 float:left;
@@ -153,14 +164,13 @@ $(function(){
             <div class="sJump-popup">
                 <div class="sJump-tabs">
                     <ul class="tab-name">
-                        <li index="1">选项:1</li>
+                        <li index="1">选择搜索</li>
                         <li index="2">选项:1</li>
                         <li index="3">选项:1</li>
                         <li index="4">选项:1</li>
                     </ul>
                     <ul class="tab-list">
                         <li index="1" class="tab-content"> 
-                        1
                         </li>
                         <li index="2" class="tab-content"> 
                         2
@@ -173,6 +183,9 @@ $(function(){
                         </li>
                     </ul>
                 </div>
+            <input class="sJump-save" value="保存" type="button">
+            <input class="sJump-update-favicon" value="更新Fav" type="button">
+            
             </div>
             <canvas id="sJump-favicon" width="16px" height="16px"></canvas>
         */}); 
@@ -195,7 +208,6 @@ $(function(){
     
     // save form --------------------------------------------------------------------------------
     sJump.clearInspect = function(){
-        $("*").removeClass("sJump-inspect");
         $(".sJump-inspect-notify").remove();
     }
 
@@ -221,7 +233,6 @@ $(function(){
     sJump.event.inspect = function(e){
         log("%chover:%c"+cssPath($(this)[0]), "color:green", "color:black");
         sJump.clearInspect();
-        $(this).addClass("sJump-inspect");
         $(this).append("<b class=\"sJump-inspect-notify\">"+cssPath($(this)[0])+"</b>");
         e.stopPropagation();
     }
@@ -235,27 +246,27 @@ $(function(){
     }
 
     sJump.event.doInspect = function(e){
-        log("%cclick:%c"+cssPath($(this)[0]), "color:red", "color:black");
-        if ($(this)[0].nodeName=='INPUT') {
-            var action = sJump.getFormAction($(this))
+        el = $(e.target);
+        log("%cclick:%c"+cssPath(el), "color:red", "color:black");
+        if (el[0].nodeName=='INPUT') {
+            var action = sJump.getFormAction(el)
             var sUrl = '';
             if (action != undefined) {
-                var queryName = $(this).attr("name");
+                var queryName = el.attr("name");
                 sUrl = action +"?"+ queryName + "=";
             }else{
                 sUrl = prompt("please input search url")
             }
-
-            console.log(sUrl, cssPath($(this)[0]))
-            sJump.store.saveSearch(sUrl, cssPath($(this)[0]))
-            log(sUrl, sFav);
+            console.log(sUrl, cssPath(el))
+            sJump.store.saveSearch(sUrl, cssPath(el[0]))
+            log(sUrl);
         } else {
             console.dir(e.ctrlKey);
             var method = 'after';
             if (e.ctrlKey) {
                 method = 'before';
             }
-            sJump.store.savePosition(cssPath($(this)[0]), method)
+            sJump.store.savePosition(cssPath(el[0]), method)
         }
         e.stopPropagation();
         sJump.event.unbind();
@@ -368,23 +379,18 @@ $(function(){
         // inspect ---------------------------------------------------------------------------
         iel.bind("mouseenter", sJump.event.inspect);
         iel.bind("mouseleave", sJump.clearInspect);
-        
-        // get form field --------------------------------------------------------------------
-        $("body").on("click",".sJump-inspect", sJump.event.doInspect);
+        $('body').bind("mousedown", sJump.event.doInspect);
     }
 
     sJump.event.unbind = function(){
         // inspect ---------------------------------------------------------------------------
         iel.unbind("mouseenter", sJump.event.inspect);
         iel.unbind("mouseleave", sJump.clearInspect);
-
-        // get form field --------------------------------------------------------------------
-        $("body").on("mousedown,",".sJump-inspect", sJump.event.doInspect);
-
+        $('body').unbind("mousedown", sJump.event.doInspect);
     }
 
     $(".sJump-icon").click(function(){
-        $(".sJump-popup").toggleClass("sJump-popup-show");
+        $(".sJump-popup").center().toggleClass("sJump-popup-show");
         return false;
     });
 
