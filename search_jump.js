@@ -21,6 +21,7 @@ var m = function(f) {
 }
 
 GM_addStyle(m(function(){/*
+            .sJump * { all:initial-only-support-firefox; font-size:14px; list-style:none;}
             .sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}
             .sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }
             .sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}
@@ -28,11 +29,9 @@ GM_addStyle(m(function(){/*
             #sJump-favicon{top:300px;position:fixed;right:0px;}
             .sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}
             .sJump-save,.sJump-update-favicon { margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; float: right;}
-            .sJump-tabs ul.tab-name {width:90px;}
-            .sJump-tabs ul.tab-list {width:500px;}
+            .sJump-tabs ul.tab-name {width:90px; padding:0px 20px;}
+            .sJump-tabs ul.tab-list {width:450px;padding:0px;}
             .sJump-tabs .tab-name li {
-                background:#232323;
-                list-style:none;
                 border-bottom:1px solid #323131;
                 color:#74E806;
                 padding:5px;
@@ -40,12 +39,11 @@ GM_addStyle(m(function(){/*
             }
             .sJump-tabs .tab-name li:hover{
                 color:#D7005F;
-                border-bottom:1px solid #777;
             }
             .sJump-popup-show{display:block !important; }
             .sJump-popup {
                 -moz-transition:all .9s ease;
-                background: none repeat scroll 0 0 #232323;
+                background:none repeat scroll 0 0 rgba(35, 35, 35, 0.89);
                 box-shadow: 1px 2px 10px;
                 left: 100px;
                 padding: 10px 0;
@@ -123,11 +121,12 @@ var getObjFromGM = function(name){
 sJump_searchs = getObjFromGM("sJump_searchs")
 sJump_positions = getObjFromGM("sJump_positions")
 sJump_forms = getObjFromGM("sJump_forms")
-
+sJump_update_favicon = GM_getValue("sJump_update_favicon")
 
 log(sJump_positions);
 log(sJump_searchs);
-log(sJump_forms)
+log(sJump_forms);
+log(sJump_update_favicon);
 
 // http://stackoverflow.com/questions/3620116/get-css-path-from-dom-element
 var cssPath = function(el) {
@@ -162,18 +161,18 @@ var cssPath = function(el) {
 
 $(function(){
     var html = m(function(){/*
-            <div class="sJump-menu">
+            <div class="sJump-menu sJump">
                 <a href="#" class="sJump-icon">s</a>
                 <a href="#" class="sJump-add-search">+</a>
                 <a href="#" class="sJump-after-search">-</a>
             </div>
-            <div class="sJump-popup">
+            <div class="sJump-popup sJump">
                 <div class="sJump-tabs">
                     <ul class="tab-name">
                         <li index="1">选择搜索</li>
-                        <li index="2">选项:1</li>
-                        <li index="3">选项:1</li>
-                        <li index="4">选项:1</li>
+                        <li index="2">更新fav</li>
+                        <li index="3">分组</li>
+                        <li index="4">关于</li>
                     </ul>
                     <ul class="tab-list">
                         <li index="1" class="tab-content"> 
@@ -191,7 +190,6 @@ $(function(){
                 </div>
             <input class="sJump-save" value="保存" type="button">
             <input class="sJump-update-favicon" value="更新Fav" type="button">
-            
             </div>
             <canvas id="sJump-favicon" width="16px" height="16px"></canvas>
         */}); 
@@ -426,13 +424,20 @@ $(function(){
     });
 
     $(".sJump-update-favicon").click(function(){
+        GM_setValue('sJump_update_favicon', 1);
+        window.location = 'http://www.google.com/s2/favicons?domain=google.com'
+    });
+
+    if (sJump_update_favicon) {
         log("update favicion");
         $(".sJump-popup input[type='checkbox']").each(function(){
             if ($(this).attr("checked")=='checked') {
                 sJump.update.favicon($(this).val());
             }
         });
-    });
+        GM_setValue('sJ_update_favicon', 0);
+    }
+
 
     sJump.dom.addSearchBar();
 
