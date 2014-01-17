@@ -24,7 +24,7 @@ GM_addStyle(m(function(){/*
             .sJump * { all:initial-only-support-firefox; font-size:14px; list-style:none;}
             .sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}
             .sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }
-            .sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px;}
+            .sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px; position:relative; z-index:1000000;}
             .sJump-search-bar img{width:16px;height:16px;vertical-align:middle;margin-right:1px;}
             #sJump-favicon{top:300px;position:fixed;right:0px;}
             .sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}
@@ -33,7 +33,7 @@ GM_addStyle(m(function(){/*
             .sJump-import{right:10px;}
             .sJump-update-favicon{right:70px;}
             .sJump-tabs ul.tab-name {width:90px; padding:0px 20px;}
-            .sJump-tabs ul.tab-list {width:450px;padding:0px;}
+            .sJump-tabs ul.tab-list {width:auto;padding:0px;}
             .sJump-tabs .tab-name li {
                 color:#74E806;
                 padding:5px;
@@ -51,7 +51,7 @@ GM_addStyle(m(function(){/*
                 padding: 10px 0;
                 position: absolute;
                 top: 100px;
-                width: 600px;
+                min-width: 600px;
                 z-index: 20000000;
                 display:none;
             }
@@ -65,6 +65,7 @@ GM_addStyle(m(function(){/*
             }
             .sJump-tabs .tab-list .tab-content:nth-child(1) {
                 display:block;
+                width:450px;
             }
             .sJump-tabs .tab-list .tab-content:nth-child(1) li{
                 float:left;
@@ -82,10 +83,10 @@ GM_addStyle(m(function(){/*
                 height: 100px;
                 width: 450px;
                 margin-bottom: 25px;
+                margin-right: 25px;
             }
 */})); 
 
-//global 
 
 // DEBUG
 var sJumpDebug = true;
