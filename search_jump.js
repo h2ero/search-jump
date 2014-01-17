@@ -28,7 +28,9 @@ GM_addStyle(m(function(){/*
             .sJump-search-bar img{width:16px;height:16px;vertical-align:middle;margin-right:1px;}
             #sJump-favicon{top:300px;position:fixed;right:0px;}
             .sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}
-            .sJump-save,.sJump-update-favicon { margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; float: right;}
+            .sJump-save,.sJump-update-favicon { position:absolute; bottom:5px; margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; float: right;}
+            .sJump-save{right:10px;}
+            .sJump-update-favicon{right:70px;}
             .sJump-tabs ul.tab-name {width:90px; padding:0px 20px;}
             .sJump-tabs ul.tab-list {width:450px;padding:0px;}
             .sJump-tabs .tab-name li {
@@ -171,25 +173,26 @@ $(function(){
                     <ul class="tab-name">
                         <li index="1">选择搜索</li>
                         <li index="2">更新fav</li>
-                        <li index="3">分组</li>
+                        <li index="3">导入导出</li>
                         <li index="4">关于</li>
                     </ul>
                     <ul class="tab-list">
                         <li index="1" class="tab-content"> 
+                            <div> </div>
+                            <input class="sJump-save" value="保存" type="button">
+                            <input class="sJump-update-favicon" value="更新Fav" type="button">
                         </li>
                         <li index="2" class="tab-content"> 
                         2
                         </li>
                         <li index="3" class="tab-content">
-                        3
+
                         </li>
                         <li index="4" class="tab-content">
                         4
                         </li>
                     </ul>
                 </div>
-            <input class="sJump-save" value="保存" type="button">
-            <input class="sJump-update-favicon" value="更新Fav" type="button">
             </div>
             <canvas id="sJump-favicon" width="16px" height="16px"></canvas>
         */}); 
@@ -205,7 +208,7 @@ $(function(){
         checkbox += "<li><input type=\"checkbox\" "+checked+"value=\""+i+"\">"+unescape(atob(i))+"</li>";
     }
 
-    $(".sJump-popup .tab-content[index='1']").html(checkbox);
+    $(".sJump-popup .tab-content[index='1'] div").html(checkbox);
 
     var sJump = {};
     sJump.event = {};
@@ -352,19 +355,19 @@ $(function(){
         var searchUrl = sJump_searchs[searchHash].url
         regex = /\/\/(.*?)\//
         var domain = searchUrl.match(regex)[1]
-        console.log(domain);
+        log(domain);
         var canvas = document.getElementById('sJump-favicon');
         var context = canvas.getContext('2d');
-        context.clearRect(0,0,16,16);
-        context.rect(20,20,150,100);
-        context.fillStyle="white";
-        context.fill();
         var imageObj = new Image();
 
         imageObj.onload = function() {
-          context.drawImage(imageObj, 0, 0);
-          log(canvas.toDataURL())
-          sJump.update.saveFavicon(searchHash, canvas.toDataURL());
+            context.clearRect(0,0,16,16);
+            context.rect(20,20,150,100);
+            context.fillStyle="white";
+            context.drawImage(imageObj, 0, 0);
+            context.fill();
+            log(canvas.toDataURL());
+            sJump.update.saveFavicon(searchHash, canvas.toDataURL());
         };
         imageObj.src = 'http://www.google.com/s2/favicons?domain='+domain;
     }
@@ -428,15 +431,20 @@ $(function(){
         window.location = 'http://www.google.com/s2/favicons?domain=google.com'
     });
 
-    if (sJump_update_favicon) {
+    if (sJump_update_favicon == 1) {
         log("update favicion");
         $(".sJump-popup input[type='checkbox']").each(function(){
             if ($(this).attr("checked")=='checked') {
                 sJump.update.favicon($(this).val());
             }
         });
-        GM_setValue('sJ_update_favicon', 0);
+        GM_setValue('sJump_update_favicon', 0);
     }
+    $(".sJump-popup .tab-name li").click(function(){
+        var index = $(this).attr('index');
+        $('.sJump-tabs .tab-content').hide();
+        $('.sJump-tabs .tab-content[index="'+index+'"]').show();
+    });
 
 
     sJump.dom.addSearchBar();
