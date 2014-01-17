@@ -95,6 +95,12 @@ if (sJumpDebug) {
     log = function(){};
 }
 
+if (window !== window.parent) {
+    log('frame');
+    return ;
+}
+
+
 // 载入提示.
 log("sJump load!")
 
