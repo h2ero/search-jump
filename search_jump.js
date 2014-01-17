@@ -28,13 +28,13 @@ GM_addStyle(m(function(){/*
             .sJump-search-bar img{width:16px;height:16px;vertical-align:middle;margin-right:1px;}
             #sJump-favicon{top:300px;position:fixed;right:0px;}
             .sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}
-            .sJump-save,.sJump-update-favicon { position:absolute; bottom:5px; margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; float: right;}
+            .sJump-import,.sJump-save,.sJump-update-favicon { position:absolute; bottom:5px; margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; }
             .sJump-save{right:10px;}
+            .sJump-import{right:10px;}
             .sJump-update-favicon{right:70px;}
             .sJump-tabs ul.tab-name {width:90px; padding:0px 20px;}
             .sJump-tabs ul.tab-list {width:450px;padding:0px;}
             .sJump-tabs .tab-name li {
-                border-bottom:1px solid #323131;
                 color:#74E806;
                 padding:5px;
                 cursor: pointer;
@@ -69,10 +69,19 @@ GM_addStyle(m(function(){/*
             .sJump-tabs .tab-list .tab-content:nth-child(1) li{
                 float:left;
                 color:#D7005F;
-                margin:0 4px;
+                margin:5px;
             }
             .sJump-tabs .tab-list .tab-content:nth-child(1) li input{
                 margin-left:1px;
+            }
+            .sJump-tabs .tab-content.about{
+                color:#ccc;
+                padding: 55px;
+            }
+            .sJump-tabs .tab-content .import{
+                height: 100px;
+                width: 450px;
+                margin-bottom: 25px;
             }
 */})); 
 
@@ -183,13 +192,16 @@ $(function(){
                             <input class="sJump-update-favicon" value="更新Fav" type="button">
                         </li>
                         <li index="2" class="tab-content"> 
-                        2
                         </li>
                         <li index="3" class="tab-content">
-
+                            <textarea class="import">
+                            </textarea>
+                            <input type="button" class="sJump-import" value="导入">
                         </li>
-                        <li index="4" class="tab-content">
-                        4
+                        <li index="4" class="tab-content about">
+                            repo:https://github.com/h2ero/search-jump
+                            <br>
+                            by: h2ero <122750707@qq.com> 
                         </li>
                     </ul>
                 </div>
@@ -199,6 +211,7 @@ $(function(){
 
     $('body').after(html);
 
+    // 添加到选择
     var checkbox = "";
     for(i in sJump_searchs){
         var checked = '';
@@ -209,6 +222,16 @@ $(function(){
     }
 
     $(".sJump-popup .tab-content[index='1'] div").html(checkbox);
+
+    // 添加到导入
+    $('.sJump-tabs .import').text(JSON.stringify({
+        // DOM信息,
+        'sJump_positions':sJump_positions,
+        // 提交URL, 是否启用, favicon
+        'sJump_searchs':sJump_searchs,
+        // cssPath , search name
+        'sJump_forms':sJump_forms
+    }));
 
     var sJump = {};
     sJump.event = {};
@@ -444,6 +467,15 @@ $(function(){
         var index = $(this).attr('index');
         $('.sJump-tabs .tab-content').hide();
         $('.sJump-tabs .tab-content[index="'+index+'"]').show();
+    });
+
+    // 导入操作
+    $(".sJump-import").click(function(){
+        var data = JSON.parse($('.sJump-tabs .import').val());
+        log('improt data');
+        for (i in data) {
+            GM_setValue(i, JSON.stringify(data[i]));
+        }
     });
 
 
