@@ -240,6 +240,7 @@ $(function(){
     // save form --------------------------------------------------------------------------------
     sJump.clearInspect = function(){
         $(".sJump-inspect-notify").remove();
+        $('.sJump-inspect').removeClass('sJump-inspect');
     }
 
     sJump.getFormAction = function(el){
@@ -264,6 +265,7 @@ $(function(){
     sJump.event.inspect = function(e){
         log("%chover:%c"+cssPath($(this)[0]), "color:green", "color:black");
         sJump.clearInspect();
+        $(this).addClass('sJump-inspect');
         $(this).append("<b class=\"sJump-inspect-notify\">"+cssPath($(this)[0])+"</b>");
         e.stopPropagation();
     }
