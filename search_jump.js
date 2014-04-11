@@ -182,7 +182,7 @@ $(function(){
                 <div class="sJump-tabs">
                     <ul class="tab-name">
                         <li index="1">选择搜索</li>
-                        <li index="2">更新fav</li>
+                        <li index="2">分类</li>
                         <li index="3">导入导出</li>
                         <li index="4">关于</li>
                     </ul>
