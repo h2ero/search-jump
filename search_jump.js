@@ -464,9 +464,9 @@ $(function(){
             };
             var logo = "<b style=\"color: rgb(0, 0, 0);\">SJ</b>"
             if (sJump_positions[document.domain].method == 'after') {
-                $(sJump_positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
+                $($(sJump_positions[document.domain].cssPath)[0]).after("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
             }else{
-                $(sJump_positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
+                $($(sJump_positions[document.domain].cssPath)[0]).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
             }
         }
     }
