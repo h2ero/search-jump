@@ -57,6 +57,7 @@ loadCss = function(){
                     position: absolute;
                     top: 100px;
                     min-width: 600px;
+                    min-height: 200px;
                     z-index: 20000000;
                     display:none;
                 }
@@ -79,6 +80,7 @@ loadCss = function(){
                 }
                 .sJump-tabs .tab-list .tab-content:nth-child(1) li input{
                     margin-left:1px;
+                    margin-right:5px;
                 }
                 .sJump-tabs .tab-content.about{
                     color:#ccc;
@@ -93,7 +95,6 @@ loadCss = function(){
     */});
     $('body').after(style);
 }
-loadCss();
 
 
 // DEBUG
@@ -123,6 +124,8 @@ if (window !== window.parent) {
 
 // 载入提示.
 log("sJump load!")
+loadCss();
+log("load css")
 
 
 // 全局OBJ
