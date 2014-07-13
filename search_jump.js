@@ -5,6 +5,8 @@
 // @version     0.1
 // @description  search jump
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
+// @grant       GM_getValue
+// @grant       GM_setValue
 // ==/UserScript==
 // style 
 
@@ -17,12 +19,13 @@ jQuery.fn.center = function ()
 }
 
 var m = function(f) {
-    console.log(f);
   return f.toString().split('\n').slice(1, -1).join('\n');
 }
 var gm = {};
-gm.loadCss = function(){
-    GM_addStyle(m(function(){/*
+loadCss = function(){
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.textContent = m(function(){/*
                 .sJump * { all:initial-only-support-firefox; font-size:14px; list-style:none;}
                 .sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}
                 .sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }
@@ -87,9 +90,10 @@ gm.loadCss = function(){
                     margin-bottom: 25px;
                     margin-right: 25px;
                 }
-    */})); 
-}();
-
+    */});
+    $('body').after(style);
+}
+loadCss();
 
 
 // DEBUG
@@ -104,14 +108,16 @@ var excludeInspectEl = '.sJump-menu *,.sJump-menu,.sJump-popup *, .sJump-popup';
 // 日志输出
 var log;
 if (sJumpDebug) {
-    log = console.log;
+    log = function(arguments){
+        Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+    }
 }else{
     log = function(){};
 }
 
 if (window !== window.parent) {
-    log('frame');
-    return ;
+    log('skip frame');
+    // throw{name:'iframe', message:'skip iframe'}
 }
 
 
@@ -487,6 +493,5 @@ $(function(){
 
 
     sJump.dom.addSearchBar();
-    gm.loadCss();
 
 });
