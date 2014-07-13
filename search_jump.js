@@ -105,7 +105,9 @@ loadCss = function(){
                     background: none repeat scroll 0 0 #F5F5F5;
                     border: medium none;
                     border-radius: 3px 3px 3px 3px;
+                    padding: 3px 5px;
                     color: #3E3D3D;
+                    cursor: pointer;
                 }
                 .sJump-save {
                     right: 10px;
