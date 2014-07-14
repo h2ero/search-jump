@@ -5,6 +5,8 @@
 // @version     0.1
 // @description  search jump
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
+// @grant       GM_getValue
+// @grant       GM_setValue
 // ==/UserScript==
 // style 
 
@@ -19,73 +21,169 @@ jQuery.fn.center = function ()
 var m = function(f) {
   return f.toString().split('\n').slice(1, -1).join('\n');
 }
-
-GM_addStyle(m(function(){/*
-            .sJump * { all:initial-only-support-firefox; font-size:14px; list-style:none;}
-            .sJump-inspect{ border:1px solid !important; } .sJump-inspect-notify{ color:#000; background-color:#f00; font-size:13px !important; padding:2px; z-index=999999;}
-            .sJump-menu {z-index:999999999999; background: none repeat scroll 0 0 #2D2D2D; position: fixed; right: -70px; top: 50px; width: 80px; padding:0px 5px; box-shadow:1px 1px 10px #000; -moz-transition:all .2s ease; } .sJump-menu:hover{ right: 0px; } .sJump-menu a{ color:#bbb; text-decoration:none; font-size: 14px; line-height: 20px; padding:2px; font-weight:bold; } .sJump-menu a:hover{ color:#fff; }
-            .sJump-search-bar{clear:both;margin:20px 0px;background:none repeat scroll 0 0 rgba(255, 255, 255, 0.23); box-shadow: 1px 1px 5px #000000; font-size: 14px;height: 30px; line-height: 30px; padding-left: 20px; position:relative; z-index:1000000;}
-            .sJump-search-bar img{width:16px;height:16px;vertical-align:middle;margin-right:1px;}
-            #sJump-favicon{top:300px;position:fixed;right:0px;}
-            .sJump-search-bar a{color: #000000; margin: 0 5px; text-decoration: none; text-shadow: 1px 1px 1px #9C9C9C;}
-            .sJump-import,.sJump-save,.sJump-update-favicon { position:absolute; bottom:5px; margin:0px 2px;background: none repeat scroll 0 0 #F5F5F5; border: medium none; border-radius: 3px 3px 3px 3px; color: #3E3D3D; }
-            .sJump-save{right:10px;}
-            .sJump-import{right:10px;}
-            .sJump-update-favicon{right:70px;}
-            .sJump-tabs ul.tab-name {width:90px; padding:0px 20px;}
-            .sJump-tabs ul.tab-list {width:auto;padding:0px;}
-            .sJump-tabs .tab-name li {
-                color:#74E806;
-                padding:5px;
-                cursor: pointer;
-            }
-            .sJump-tabs .tab-name li:hover{
-                color:#D7005F;
-            }
-            .sJump-popup-show{display:block !important; }
-            .sJump-popup {
-                -moz-transition:all .9s ease;
-                background:none repeat scroll 0 0 rgba(35, 35, 35, 0.89);
-                box-shadow: 1px 2px 10px;
-                left: 100px;
-                padding: 10px 0;
-                position: absolute;
-                top: 100px;
-                min-width: 600px;
-                z-index: 20000000;
-                display:none;
-            }
-            .sJump-tabs .tab-name, .sJump-tabs .tab-list {
-                float:left;
-            }
-            .sJump-tabs .tab-name, .sJump-tabs .tab-list {
-            }
-            .sJump-tabs .tab-list .tab-content {
-                display:none;
-            }
-            .sJump-tabs .tab-list .tab-content:nth-child(1) {
-                display:block;
-                width:450px;
-            }
-            .sJump-tabs .tab-list .tab-content:nth-child(1) li{
-                float:left;
-                color:#D7005F;
-                margin:5px;
-            }
-            .sJump-tabs .tab-list .tab-content:nth-child(1) li input{
-                margin-left:1px;
-            }
-            .sJump-tabs .tab-content.about{
-                color:#ccc;
-                padding: 55px;
-            }
-            .sJump-tabs .tab-content .import{
-                height: 100px;
-                width: 450px;
-                margin-bottom: 25px;
-                margin-right: 25px;
-            }
-*/})); 
+var gm = {};
+loadCss = function(){
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.textContent = m(function(){/*
+                .sJump * {
+                    all: initial-only-support-firefox;
+                    font-size: 14px;
+                    list-style: none;
+                }
+                .sJump-inspect {
+                    border: 1px solid !important;
+                }
+                .sJump-inspect-notify {
+                    color: #000;
+                    background-color: #f00;
+                    font-size: 13px !important;
+                    padding: 2px;
+                    z-index=999999;
+                }
+                .sJump-menu {
+                    z-index: 999999999999;
+                    background: none repeat scroll 0 0 #2D2D2D;
+                    position: fixed;
+                    right: -70px;
+                    top: 50px;
+                    width: 80px;
+                    padding: 0px 5px;
+                    box-shadow: 1px 1px 10px #000;
+                    -moz-transition: all .2s ease;
+                }
+                .sJump-menu:hover {
+                    right: 0px;
+                }
+                .sJump-menu a {
+                    color: #bbb;
+                    text-decoration: none;
+                    font-size: 14px;
+                    line-height: 20px;
+                    padding: 2px;
+                    font-weight: bold;
+                }
+                .sJump-menu a:hover {
+                    color: #fff;
+                    background: #3377AA;
+                }
+                .sJump-search-bar {
+                    clear: both;
+                    margin: 20px 0px;
+                    background: none repeat scroll 0 0 rgba(255, 255, 255, 0.23);
+                    box-shadow: 1px 1px 5px #000000;
+                    font-size: 14px;
+                    height: 30px;
+                    line-height: 30px;
+                    padding-left: 20px;
+                    position: relative;
+                    z-index: 1000000;
+                }
+                .sJump-search-bar img {
+                    width: 16px;
+                    height: 16px;
+                    vertical-align: middle;
+                    margin-right: 1px;
+                }
+                #sJump-favicon {
+                    top: 300px;
+                    position: fixed;
+                    right: 0px;
+                }
+                .sJump-search-bar a {
+                    color: #000000;
+                    margin: 0 5px;
+                    text-decoration: none;
+                    text-shadow: 1px 1px 1px #9C9C9C;
+                }
+                .sJump-import,
+                .sJump-save,
+                .sJump-update-favicon {
+                    position: absolute;
+                    bottom: 5px;
+                    margin: 0px 2px;
+                    background: none repeat scroll 0 0 #F5F5F5;
+                    border: medium none;
+                    border-radius: 3px 3px 3px 3px;
+                    padding: 3px 5px;
+                    color: #3E3D3D;
+                    cursor: pointer;
+                }
+                .sJump-save {
+                    right: 10px;
+                }
+                .sJump-import {
+                    right: 10px;
+                }
+                .sJump-update-favicon {
+                    right: 70px;
+                }
+                .sJump-tabs ul.tab-name {
+                    width: 90px;
+                    padding: 0px 20px;
+                }
+                .sJump-tabs ul.tab-list {
+                    width: auto;
+                    padding: 0px;
+                }
+                .sJump-tabs .tab-name li {
+                    color: #74E806;
+                    padding: 5px;
+                    cursor: pointer;
+                }
+                .sJump-tabs .tab-name li:hover {
+                    color: #D7005F;
+                }
+                .sJump-popup-show {
+                    display: block !important;
+                }
+                .sJump-popup {
+                    -moz-transition: all .9s ease;
+                    background: none repeat scroll 0 0 rgba(35, 35, 35, 0.89);
+                    box-shadow: 1px 2px 10px;
+                    left: 100px;
+                    padding: 10px 0;
+                    position: absolute;
+                    top: 100px;
+                    min-width: 600px;
+                    min-height: 200px;
+                    z-index: 20000000;
+                    display: none;
+                }
+                .sJump-tabs .tab-name,
+                .sJump-tabs .tab-list {
+                    float: left;
+                }
+                .sJump-tabs .tab-name,
+                .sJump-tabs .tab-list {} .sJump-tabs .tab-list .tab-content {
+                    display: none;
+                }
+                .sJump-tabs .tab-list .tab-content:nth-child(1) {
+                    display: block;
+                    width: 450px;
+                }
+                .sJump-tabs .tab-list .tab-content:nth-child(1) li {
+                    float: left;
+                    color: #D7005F;
+                    margin: 5px;
+                }
+                .sJump-tabs .tab-list .tab-content:nth-child(1) li input {
+                    margin-left: 1px;
+                    margin-right: 5px;
+                }
+                .sJump-tabs .tab-content.about {
+                    color: #ccc;
+                    padding: 55px;
+                }
+                .sJump-tabs .tab-content .import {
+                    height: 100px;
+                    width: 450px;
+                    margin-bottom: 25px;
+                    margin-right: 25px;
+                }
+                */});
+    $('body').after(style);
+}
 
 
 // DEBUG
@@ -100,19 +198,23 @@ var excludeInspectEl = '.sJump-menu *,.sJump-menu,.sJump-popup *, .sJump-popup';
 // 日志输出
 var log;
 if (sJumpDebug) {
-    log = console.log;
+    log = function(arguments){
+        Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+    }
 }else{
     log = function(){};
 }
 
 if (window !== window.parent) {
-    log('frame');
-    return ;
+    log('skip frame');
+    // throw{name:'iframe', message:'skip iframe'}
 }
 
 
 // 载入提示.
 log("sJump load!")
+loadCss();
+log("load css")
 
 
 // 全局OBJ
@@ -364,9 +466,9 @@ $(function(){
             };
             var logo = "<b style=\"color: rgb(0, 0, 0);\">SJ</b>"
             if (sJump_positions[document.domain].method == 'after') {
-                $(sJump_positions[document.domain].cssPath).after("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
+                $($(sJump_positions[document.domain].cssPath)[0]).after("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
             }else{
-                $(sJump_positions[document.domain].cssPath).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
+                $($(sJump_positions[document.domain].cssPath)[0]).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
             }
         }
     }
