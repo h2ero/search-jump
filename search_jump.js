@@ -199,7 +199,7 @@ var excludeInspectEl = '.sJump-menu *,.sJump-menu,.sJump-popup *, .sJump-popup';
 var log;
 if (sJumpDebug) {
     log = function(arguments){
-        Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+        Function.prototype.call.call(console.log, console, arguments);
     }
 }else{
     log = function(){};
