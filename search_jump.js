@@ -207,7 +207,7 @@ if (sJumpDebug) {
 
 if (window !== window.parent) {
     log('skip frame');
-    // throw{name:'iframe', message:'skip iframe'}
+    throw{name:'iframe', message:'skip iframe'}
 }
 
 
