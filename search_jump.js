@@ -583,7 +583,11 @@ $(function(){
         }
     });
 
-
     sJump.dom.addSearchBar();
+
+    $(".sJump-search-bar img").on('error', function(){
+        log('image load error');
+        // todo replace src with domain.com/favicon
+    });
 
 });
