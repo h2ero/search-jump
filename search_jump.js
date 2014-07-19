@@ -99,9 +99,7 @@ loadCss = function(){
                     text-shadow: 1px 1px 1px #9C9C9C;
                     display:inline;
                 }
-                .sJump-import,
-                .sJump-save,
-                .sJump-update-favicon {
+                .sJump-btn {
                     position: absolute;
                     bottom: 5px;
                     margin: 0px 2px;
@@ -120,6 +118,12 @@ loadCss = function(){
                 }
                 .sJump-update-favicon {
                     right: 70px;
+                }
+                .sJump-toggle-select{
+                    right: 150px;
+                }
+                .sJump-del-search{
+                    right: 203px;
                 }
                 .sJump-tabs ul.tab-name {
                     width: 90px;
@@ -296,10 +300,12 @@ $(function(){
                         <li index="4">关于</li>
                     </ul>
                     <ul class="tab-list">
-                        <li index="1" class="tab-content"> 
+                        <li index="1" class="tab-content sJump-man-search"> 
                             <div> </div>
-                            <input class="sJump-save" value="保存" type="button">
-                            <input class="sJump-update-favicon" value="更新Fav" type="button">
+                            <input class="sJump-save sJump-btn" value="保存" type="button">
+                            <input class="sJump-update-favicon sJump-btn" value="更新Fav" type="button">
+                            <input class="sJump-toggle-select sJump-btn" value="反选" type="button">
+                            <input class="sJump-del-search sJump-btn" value="删除" type="button">
                         </li>
                         <li index="2" class="tab-content"> 
                         </li>
@@ -439,7 +445,15 @@ $(function(){
         log("%csave form:"+value,"color:blue");
 
     }
-
+    sJump.store.delSearch = function(searchHash){
+        if (searchHash) {
+            console.log(searchHash);
+            delete sJump_searchs[searchHash];
+            var value = JSON.stringify(sJump_searchs);
+            GM_setValue("sJump_searchs", value)
+            console.log('delete'+unescape(atob(searchHash)));
+        }
+    }
     sJump.store.savePosition = function(cssPath,method){
         var sJump_position = prompt("input position");
         if (sJump_position) {
@@ -613,6 +627,29 @@ $(function(){
         for (i in data) {
             GM_setValue(i, JSON.stringify(data[i]));
         }
+    });
+
+    // toggle select
+    $(".sJump-toggle-select").click(function(){
+        var el = $("input", $(this).parent());
+        el.each(function(){
+            $(this).prop("checked", !$(this).prop("checked"));
+        });
+    });
+
+    // delete search
+    $('.sJump-del-search').click(function(){
+        $(".sJump-man-search input[type='checkbox']").each(function(){
+            if($(this).attr('checked') == 'checked'){
+                var searchName = $(this).val()
+                // delete
+                var isDel = confirm("deltet "+ unescape(atob(searchName)) + "?")
+                if (isDel) {
+                    sJump.store.delSearch(searchName);
+                    $(this).parent().fadeOut();
+                }
+            }
+        });
     });
 
 
