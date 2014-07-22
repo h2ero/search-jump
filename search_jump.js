@@ -2,9 +2,10 @@
 // @name        sJump
 // @namespace   http://blog.h2ero.cn
 // @include     *
-// @version     0.1
-// @description  search jump
-// @require        http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
+// @version     0.2
+// @description search jump
+// @update      2014-07-20 06:00:30
+// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js
 // @grant       GM_getValue
 // @grant       GM_setValue
 // ==/UserScript==
@@ -84,6 +85,7 @@ loadCss = function(){
                     height: 16px;
                     vertical-align: middle;
                     margin-right: 1px;
+                    display:inline;
                 }
                 #sJump-favicon {
                     top: 300px;
@@ -95,10 +97,9 @@ loadCss = function(){
                     margin: 0 5px;
                     text-decoration: none;
                     text-shadow: 1px 1px 1px #9C9C9C;
+                    display:inline;
                 }
-                .sJump-import,
-                .sJump-save,
-                .sJump-update-favicon {
+                .sJump-btn {
                     position: absolute;
                     bottom: 5px;
                     margin: 0px 2px;
@@ -117,6 +118,12 @@ loadCss = function(){
                 }
                 .sJump-update-favicon {
                     right: 70px;
+                }
+                .sJump-toggle-select{
+                    right: 150px;
+                }
+                .sJump-del-search{
+                    right: 203px;
                 }
                 .sJump-tabs ul.tab-name {
                     width: 90px;
@@ -189,6 +196,9 @@ loadCss = function(){
 // DEBUG
 var sJumpDebug = true;
 
+// Inspect type w->word p->position
+var inspectType = 'w';
+
 // 允许选择的元素.
 var inspectEl = 'div,p,a,input,button,form,b,i,span,h1,h2,h3,h4,h5';
 
@@ -237,10 +247,10 @@ sJump_positions = getObjFromGM("sJump_positions")
 sJump_forms = getObjFromGM("sJump_forms")
 sJump_update_favicon = GM_getValue("sJump_update_favicon")
 
-log(sJump_positions);
-log(sJump_searchs);
-log(sJump_forms);
-log(sJump_update_favicon);
+log({"sJump_positions": sJump_positions});
+log({"sJump_searchs": sJump_searchs});
+log({"sJump_forms":sJump_forms});
+log({"sJump_update_favicon":sJump_update_favicon});
 
 // http://stackoverflow.com/questions/3620116/get-css-path-from-dom-element
 var cssPath = function(el) {
@@ -277,8 +287,9 @@ $(function(){
     var html = m(function(){/*
             <div class="sJump-menu sJump">
                 <a href="#" class="sJump-icon">s</a>
-                <a href="#" class="sJump-add-search">+</a>
-                <a href="#" class="sJump-after-search">-</a>
+                <a href="#" class="sJump-inspect-search-wrods">w</a>
+                <a href="#" class="sJump-inspect-search-position">p</a>
+                <a href="#" class="sJump-cancle-inspect">c</a>
             </div>
             <div class="sJump-popup sJump">
                 <div class="sJump-tabs">
@@ -289,10 +300,12 @@ $(function(){
                         <li index="4">关于</li>
                     </ul>
                     <ul class="tab-list">
-                        <li index="1" class="tab-content"> 
+                        <li index="1" class="tab-content sJump-man-search"> 
                             <div> </div>
-                            <input class="sJump-save" value="保存" type="button">
-                            <input class="sJump-update-favicon" value="更新Fav" type="button">
+                            <input class="sJump-save sJump-btn" value="保存" type="button">
+                            <input class="sJump-update-favicon sJump-btn" value="更新Fav" type="button">
+                            <input class="sJump-toggle-select sJump-btn" value="反选" type="button">
+                            <input class="sJump-del-search sJump-btn" value="删除" type="button">
                         </li>
                         <li index="2" class="tab-content"> 
                         </li>
@@ -351,15 +364,13 @@ $(function(){
             console.log(el.parent()[0].nodeName);
         }
         var action = el.parent().attr("action");
-        console.log(action)
-        if (!/^http/.test(action)&&action != undefined) {
+        console.log(action);
+        if (!/^http/.test(action) && action != undefined) {
             if (!/^\//.test(action)) {
                 action = document.location.origin+"/"+action;
             } else {
                 action = document.location.origin+action;
             }
-        }else{
-            return undefined;
         }
         return  action;
     }
@@ -395,7 +406,9 @@ $(function(){
             console.log(sUrl, cssPath(el))
             sJump.store.saveSearch(sUrl, cssPath(el[0]))
             log(sUrl);
-        } else {
+        } else if(inspectType == 'w'){
+            sJump.store.saveSearch(undefined, cssPath(el[0]))
+        }else{
             console.dir(e.ctrlKey);
             var method = 'after';
             if (e.ctrlKey) {
@@ -412,24 +425,40 @@ $(function(){
     sJump.store = {}
     sJump.store.saveSearch = function(url, cssPath){
         var searchName = prompt("input search");
-        if (searchName) {
+        if (searchName && url) {
             sJump_searchs[btoa(escape(searchName))] = {url:url, enable:true}
             var value = JSON.stringify(sJump_searchs);
             GM_setValue("sJump_searchs", value)
             log("%csave search:"+value,"color:blue")
 
-            //forms
-            sJump_forms[document.domain] = {cssPath:cssPath, searchName:btoa(escape(searchName))}
-            var value = JSON.stringify(sJump_forms);
-            GM_setValue("sJump_forms", value)
-            log("%csave form:"+value,"color:blue")
+        }
+        //forms
+        sJump_forms[document.domain] = {searchName:btoa(escape(searchName))}
+        if (sJump_forms[document.domain].cssPath) {
+            sJump_forms[document.domain].cssPath.concat(sJump_forms[document.domain].cssPath);
+        }else{
+            sJump_forms[document.domain].cssPath = [cssPath];
+        }
+
+        var value = JSON.stringify(sJump_forms);
+        GM_setValue("sJump_forms", value);
+        log("%csave form:"+value,"color:blue");
+
+    }
+    sJump.store.delSearch = function(searchHash){
+        if (searchHash) {
+            console.log(searchHash);
+            delete sJump_searchs[searchHash];
+            var value = JSON.stringify(sJump_searchs);
+            GM_setValue("sJump_searchs", value)
+            console.log('delete'+unescape(atob(searchHash)));
         }
     }
-
     sJump.store.savePosition = function(cssPath,method){
         var sJump_position = prompt("input position");
         if (sJump_position) {
-            sJump_positions[document.domain] = {cssPath:cssPath, method:method}
+            console.log(sJump_position);
+            sJump_positions[document.domain] = [{cssPath:cssPath, method:method}]
             var value = JSON.stringify(sJump_positions);
             GM_setValue("sJump_positions", value)
             log("%csave position:"+value,"color:blue")
@@ -442,7 +471,19 @@ $(function(){
     }
     sJump.store.getSearchWord = function(){
         if (sJump_forms.hasOwnProperty(document.domain)) {
-            return $(sJump_forms[document.domain].cssPath).val();
+            for( index in sJump_forms[document.domain].cssPath){
+                var el = $(sJump_forms[document.domain].cssPath[index]);
+                var word = "";
+                if (el[0].nodeName == 'INPUT') {
+                    word = el.val();
+                }else{
+                    word = el.text();
+                }
+                if (word) {
+                    return word;
+                }
+            }
+            return "";
         }else{
             return "";
         }
@@ -457,18 +498,22 @@ $(function(){
             if (!word) {
                 return false;
             }
-            log("add search bar:"+sJump_positions[document.domain].cssPath);
             log("catch search word:"+word)
             for (i in sJump_searchs) {
                 if (sJump_searchs[i].enable == true) {
                     searchDiv += "<a href=\""+sJump_searchs[i].url+word+"\" ><img src=\""+sJump_searchs[i].favicon+"\">"+unescape(atob(i))+"</a>"
                 }
             };
-            var logo = "<b style=\"color: rgb(0, 0, 0);\">SJ</b>"
-            if (sJump_positions[document.domain].method == 'after') {
-                $($(sJump_positions[document.domain].cssPath)[0]).after("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
-            }else{
-                $($(sJump_positions[document.domain].cssPath)[0]).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
+            var logo = "<b style=\"color: rgb(0, 0, 0);\">SJ</b>";
+            console.log(sJump_positions[document.domain]);
+            for( index in sJump_positions[document.domain]){
+                var pathInfo = sJump_positions[document.domain][index];
+                log("add search bar:"+pathInfo.cssPath);
+                if (pathInfo.method == 'after') {
+                    $($(pathInfo.cssPath)[0]).after("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
+                }else{
+                    $($(pathInfo.cssPath)[0]).before("<div class=\"sJump-search-bar\">"+logo+searchDiv+"</div>")
+                }
             }
         }
     }
@@ -531,13 +576,14 @@ $(function(){
 
 
 
-    $(".sJump-add-search").click(function(){
+    $(".sJump-inspect-search-wrods, .sJump-inspect-search-position").click(function(){
+        inspectType = $(this).text();
         log("inspect start!");
         sJump.event.bind();
         return false;
     });
 
-    $(".sJump-after-search").click(function(){
+    $(".sJump-cancle-inspect").click(function(){
         log("inspect cancle!");
         sJump.event.unbind();
         return false;
@@ -582,6 +628,30 @@ $(function(){
             GM_setValue(i, JSON.stringify(data[i]));
         }
     });
+
+    // toggle select
+    $(".sJump-toggle-select").click(function(){
+        var el = $("input", $(this).parent());
+        el.each(function(){
+            $(this).prop("checked", !$(this).prop("checked"));
+        });
+    });
+
+    // delete search
+    $('.sJump-del-search').click(function(){
+        $(".sJump-man-search input[type='checkbox']").each(function(){
+            if($(this).attr('checked') == 'checked'){
+                var searchName = $(this).val()
+                // delete
+                var isDel = confirm("deltet "+ unescape(atob(searchName)) + "?")
+                if (isDel) {
+                    sJump.store.delSearch(searchName);
+                    $(this).parent().fadeOut();
+                }
+            }
+        });
+    });
+
 
     sJump.dom.addSearchBar();
 
