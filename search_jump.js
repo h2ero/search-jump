@@ -312,7 +312,7 @@ $(function(){
                         <li index="3" class="tab-content">
                             <textarea class="import">
                             </textarea>
-                            <input type="button" class="sJump-import" value="导入">
+                            <input type="button" class="sJump-import sJump-btn" value="导入">
                         </li>
                         <li index="4" class="tab-content about">
                             repo:https://github.com/h2ero/search-jump
