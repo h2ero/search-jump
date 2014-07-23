@@ -28,7 +28,7 @@ loadCss = function(){
     style.type = 'text/css';
     style.textContent = m(function(){/*
                 .sJump * {
-                    all: initial-only-support-firefox;
+                    // all: initial;//-only-support-firefox;
                     font-size: 14px;
                     list-style: none;
                 }
@@ -63,6 +63,7 @@ loadCss = function(){
                     line-height: 20px;
                     padding: 2px;
                     font-weight: bold;
+                    cursor:pointer;
                 }
                 .sJump-menu a:hover {
                     color: #fff;
@@ -99,7 +100,7 @@ loadCss = function(){
                     text-shadow: 1px 1px 1px #9C9C9C;
                     display:inline;
                 }
-                .sJump-btn {
+                input.sJump-btn {
                     position: absolute;
                     bottom: 5px;
                     margin: 0px 2px;
@@ -135,6 +136,7 @@ loadCss = function(){
                 }
                 .sJump-tabs .tab-name li {
                     color: #74E806;
+                    display:block;
                     padding: 5px;
                     cursor: pointer;
                 }
@@ -183,7 +185,8 @@ loadCss = function(){
                     padding: 55px;
                 }
                 .sJump-tabs .tab-content .import {
-                    height: 100px;
+                    background:#fff;
+                    height: 150px;
                     width: 450px;
                     margin-bottom: 25px;
                     margin-right: 25px;
