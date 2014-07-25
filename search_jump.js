@@ -127,8 +127,6 @@ loadCss = function(){
                     right: 10px;
                 }
                 .sJump-tabs ul.tab-name {
-                    width: 90px;
-                    padding: 0px 20px;
                 }
                 .sJump-tabs ul.tab-list {
                     width: auto;
@@ -137,11 +135,12 @@ loadCss = function(){
                 .sJump-tabs .tab-name li {
                     color: #303030;
                     display:block;
-                    padding: 5px;
+                    padding: 5px 30px;
                     cursor: pointer;
                 }
                 .sJump-tabs .tab-name li:hover {
-                    color: #D7005F;
+                    color: #FFF;
+                    background:#0088CC;
                 }
                 .sJump-popup-show {
                     display: block !important;
@@ -638,7 +637,7 @@ $(function(){
 
     // toggle select
     $(".sJump-toggle-select").click(function(){
-        var el = $("input", $(this).parent());
+        var el = $("input", $(this).parent().parent());
         el.each(function(){
             $(this).prop("checked", !$(this).prop("checked"));
         });
