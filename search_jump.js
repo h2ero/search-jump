@@ -101,30 +101,30 @@ loadCss = function(){
                     display:inline;
                 }
                 input.sJump-btn {
-                    position: absolute;
-                    bottom: 5px;
-                    margin: 0px 2px;
-                    background: none repeat scroll 0 0 #F5F5F5;
-                    border: medium none;
-                    border-radius: 3px 3px 3px 3px;
-                    padding: 3px 5px;
-                    color: #3E3D3D;
+                    background-color: #F5F5F5;
+                    background-image: linear-gradient(to bottom, #FFFFFF, #E6E6E6);
+                    background-repeat: repeat-x;
+                    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) #B3B3B3;
+                    border-radius: 4px;
+                    border-style: solid;
+                    border-width: 1px;
+                    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+                    color: #333333;
                     cursor: pointer;
+                    display: inline-block;
+                    font-size: 14px;
+                    line-height: 20px;
+                    margin-bottom: 0;
+                    padding: 4px 12px;
+                    text-align: center;
+                    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+                    vertical-align: middle;
+                    bottom:10px;
                 }
-                .sJump-save {
+                .sJump-btn-group{
+                    bottom: 10px;
+                    position: absolute;
                     right: 10px;
-                }
-                .sJump-import {
-                    right: 10px;
-                }
-                .sJump-update-favicon {
-                    right: 70px;
-                }
-                .sJump-toggle-select{
-                    right: 150px;
-                }
-                .sJump-del-search{
-                    right: 203px;
                 }
                 .sJump-tabs ul.tab-name {
                     width: 90px;
@@ -135,7 +135,7 @@ loadCss = function(){
                     padding: 0px;
                 }
                 .sJump-tabs .tab-name li {
-                    color: #74E806;
+                    color: #303030;
                     display:block;
                     padding: 5px;
                     cursor: pointer;
@@ -148,7 +148,7 @@ loadCss = function(){
                 }
                 .sJump-popup {
                     -moz-transition: all .9s ease;
-                    background: none repeat scroll 0 0 rgba(35, 35, 35, 0.89);
+                    background: #fff;
                     box-shadow: 1px 2px 10px;
                     left: 100px;
                     padding: 10px 0;
@@ -304,18 +304,22 @@ $(function(){
                     </ul>
                     <ul class="tab-list">
                         <li index="1" class="tab-content sJump-man-search"> 
-                            <div> </div>
-                            <input class="sJump-save sJump-btn" value="保存" type="button">
-                            <input class="sJump-update-favicon sJump-btn" value="更新Fav" type="button">
-                            <input class="sJump-toggle-select sJump-btn" value="反选" type="button">
-                            <input class="sJump-del-search sJump-btn" value="删除" type="button">
+                            <div class="sJump-man-search-list"> </div>
+                            <div class="sJump-btn-group">
+                                <input class="sJump-save sJump-btn" value="保存" type="button">
+                                <input class="sJump-update-favicon sJump-btn" value="更新Fav" type="button">
+                                <input class="sJump-toggle-select sJump-btn" value="反选" type="button">
+                                <input class="sJump-del-search sJump-btn" value="删除" type="button">
+                            </div>
                         </li>
                         <li index="2" class="tab-content"> 
                         </li>
                         <li index="3" class="tab-content">
                             <textarea class="import">
                             </textarea>
-                            <input type="button" class="sJump-import sJump-btn" value="导入">
+                            <div class="sJump-btn-group">
+                                <input type="button" class="sJump-import sJump-btn" value="导入">
+                            </div>
                         </li>
                         <li index="4" class="tab-content about">
                             repo:https://github.com/h2ero/search-jump
@@ -340,7 +344,7 @@ $(function(){
         checkbox += "<li><input type=\"checkbox\" "+checked+"value=\""+i+"\">"+unescape(atob(i))+"</li>";
     }
 
-    $(".sJump-popup .tab-content[index='1'] div").html(checkbox);
+    $(".sJump-popup .tab-content[index='1'] div.sJump-man-search-list").html(checkbox);
 
     // 添加到导入
     $('.sJump-tabs .import').text(JSON.stringify({
