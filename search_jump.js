@@ -11,8 +11,7 @@
 // ==/UserScript==
 // style 
 
-jQuery.fn.center = function ()
-{
+jQuery.fn.center = function(){
     this.css("position","fixed");
     this.css("top", ($(window).height() / 2) - (this.outerHeight() / 2));
     this.css("left", ($(window).width() / 2) - (this.outerWidth() / 2));
@@ -142,11 +141,8 @@ loadCss = function(){
                     color: #FFF;
                     background:#0088CC;
                 }
-                .sJump-popup-show {
-                    display: block !important;
-                }
                 .sJump-popup {
-                    -moz-transition: all .9s ease;
+                    // -moz-transition: all .9s ease;
                     background: #fff;
                     box-shadow: 1px 2px 10px;
                     left: 100px;
@@ -576,7 +572,7 @@ $(function(){
     }
 
     $(".sJump-icon").click(function(){
-        $(".sJump-popup").center().toggleClass("sJump-popup-show");
+        $(".sJump-popup").center().fadeToggle();
         return false;
     });
 
